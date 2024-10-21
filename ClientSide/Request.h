@@ -10,6 +10,7 @@ public:
 	
 	std::vector<char> toBytes() const;
 	int size() const;
+	std::string toString() const;
 
 private:
 	RequestHeader header;

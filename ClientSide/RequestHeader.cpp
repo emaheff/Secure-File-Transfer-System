@@ -46,3 +46,12 @@ int RequestHeader::size() const {
 	return 16 + 1 + 2 + 4; // clientID + version + code + payloadSize
 }
 
+std::string RequestHeader::toString() const {
+    std::ostringstream oss;
+    oss << "Client ID: " << clientID << "\n";
+    oss << "Version: " << version << "\n";
+    oss << "Code: " << code << "\n";
+    oss << "Payload Size: " << payloadSize << " bytes\n";
+    return oss.str();
+}
+

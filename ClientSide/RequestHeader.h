@@ -13,6 +13,7 @@ public:
 
 	std::vector<char> toBytes() const;
 	int size() const;
+    std::string toString() const;
 
     static const int VERSION;
 

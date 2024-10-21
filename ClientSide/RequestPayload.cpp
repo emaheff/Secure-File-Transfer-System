@@ -68,4 +68,47 @@ std::vector<char> RequestPayload::stringToFixedSizeVector(const std::string& str
     return charVector;
 }
 
+void RequestPayload::setContentSize(int size) {
+	std::vector<char> sizeBytes = intToBytes(size, sizeof(int));
+	addToPayload(sizeBytes);
+}
+
+void RequestPayload::setOrigFileSize(int size) {
+	std::vector<char> sizeBytes = intToBytes(size, sizeof(int));
+	addToPayload(sizeBytes);
+}
+
+void RequestPayload::setPacketNumber(int number) {
+	std::vector<char> numberBytes = intToBytes(number, sizeof(short));
+	addToPayload(numberBytes);
+}
+
+void RequestPayload::setTotalPackets(int number) {
+	std::vector<char> numberBytes = intToBytes(number, sizeof(short));
+	addToPayload(numberBytes);
+}
+
+void RequestPayload::setFileName(const std::string& fileName) {
+	std::vector<char> fileNameBytes = stringToFixedSizeVector(fileName, 255);
+	addToPayload(fileNameBytes);
+}
+
+void RequestPayload::setContent(const std::vector<char>& content) {
+	addToPayload(content);
+}
+
+std::string RequestPayload::toString() const {
+    std::ostringstream oss;
+    oss << "Payload size: " << size() << " bytes\n";
+    for (const auto& field : payload) {
+        oss << "Field (size " << field.size() << " bytes): ";
+        for (char byte : field) {
+            oss << std::hex << std::setw(2) << std::setfill('0') << (0xFF & byte) << " ";
+        }
+        oss << "\n";
+    }
+    return oss.str();
+}
+
+
 

@@ -2,6 +2,7 @@
 #define RESPONSE_HEADER
 
 #include <vector>
+#include "ResponsePayload.h"
 
 class ResponseHeader
 {
@@ -9,6 +10,7 @@ public:
 	ResponseHeader(std::vector<char> rawData);
 	int getCode() const;
 	int getPayloadSize() const;
+    std::string toString() const;
 
     enum Code {
         RegistrationSuccess = 1600,

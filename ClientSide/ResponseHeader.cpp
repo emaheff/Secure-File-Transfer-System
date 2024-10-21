@@ -16,3 +16,46 @@ int ResponseHeader::getPayloadSize() const {
 	return payloadSize;
 }
 
+std::string ResponseHeader::toString() const {
+    std::ostringstream oss;
+    oss << "Response Header:\n";
+    oss << "Version: " << version << "\n";
+    oss << "Code: " << code << " (";
+
+    // Map the code to a human-readable description if possible
+    switch (code) {
+    case RegistrationSuccess:
+        oss << "RegistrationSuccess";
+        break;
+    case RegistrationFailure:
+        oss << "RegistrationFailure";
+        break;
+    case PublicKeyReceived:
+        oss << "PublicKeyReceived";
+        break;
+    case FileReceived:
+        oss << "FileReceived";
+        break;
+    case MessageReceived:
+        oss << "MessageReceived";
+        break;
+    case ReconnectionSuccess:
+        oss << "ReconnectionSuccess";
+        break;
+    case ReconnectionFailure:
+        oss << "ReconnectionFailure";
+        break;
+    case GeneralError:
+        oss << "GeneralError";
+        break;
+    default:
+        oss << "Unknown";
+    }
+
+    oss << ")\n";
+    oss << "Payload Size: " << payloadSize << " bytes\n";
+    return oss.str();
+}
+
+
+

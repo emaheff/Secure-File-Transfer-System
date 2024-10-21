@@ -1,6 +1,8 @@
 #include <boost/asio.hpp>
 #include <iostream>
 #include <fstream>
+#include <iomanip>
+#include <sstream>
 
 #include "FileHandler.h"
 #include "RequestPayload.h"
@@ -8,73 +10,110 @@
 #include "Request.h"
 #include "Constants.h"
 #include "ResponseHeader.h"
+#include "ResponsePayload.h"
+#include "ClientSission.h"
 
-
-
-
-
-using boost::asio::ip::tcp;
 
 int main() {
+    std::string addressAndPort = FileHandler::getSpecificLine(Constants::TRANSFER_FILE, Constants::INFO_ADDRESS_AND_PORT_LINE);
+    std::string address = addressAndPort.substr(0, addressAndPort.find(':'));
+    std::string port = addressAndPort.substr(addressAndPort.find(':') + 1);
+    std::string userName = FileHandler::getSpecificLine(Constants::TRANSFER_FILE, Constants::INFO_USERNAME_LINE);
+    std::string filePath = FileHandler::getSpecificLine(Constants::TRANSFER_FILE, Constants::INFO_FILE_PATH_LINE);
 
-	std::string addressAndPort = FileHandler::getSpecificLine(Constants::TRANSFER_FILE, Constants::INFO_ADDRESS_AND_PORT_LINE);
-	std::string address = addressAndPort.substr(0, addressAndPort.find(':'));
-	std::string port = addressAndPort.substr(addressAndPort.find(':') + 1);
-	std::string userName = FileHandler::getSpecificLine(Constants::TRANSFER_FILE, Constants::INFO_USERNAME_LINE);
-	std::string filePath = FileHandler::getSpecificLine(Constants::TRANSFER_FILE, Constants::INFO_FILE_PATH_LINE);
+    try {
+        ClientSession session(address, port);
 
-	try {
-		boost::asio::io_context io_context;
+        if (FileHandler::isFileExist(Constants::ME_FILE)) {
 
-		tcp::socket socket(io_context);
-		tcp::resolver resolver(io_context);
-		boost::asio::connect(socket, resolver.resolve(address, port));
+			// if the file me exists, then try to reconnect to the server. the method returns the response header
+			// send 827 request and receive 1605 response if the reconnection is successful and 1606 response if the reconnection is failed
+			ResponseHeader responseHeader = session.reconnect();
+			std::cout << responseHeader.toString() << std::endl;
 
-		if (FileHandler::isFileExist(Constants::ME_FILE)) {
-			userName = FileHandler::getSpecificLine(Constants::ME_FILE, 1);
+			// receive the response payload
+			ResponsePayload responsePayload = session.receiveResponsePayload(responseHeader);
 
-			// Ensure that the userName does not exceed 254 characters (leaving space for null terminator)
-			if (userName.size() > Constants::MAX_USERNAME_LENGTH) {
-				//TODO: throw an exception;
+			// print the response payload
+            std::cout << responsePayload.toString() << std::endl;
+
+			// if the response code is RECONNECTION_SUCCESS
+            if (responseHeader.getCode() == ResponseHeader::Code::ReconnectionSuccess) {
+
+				// get the aes key from the response payload
+				auto aesKey = responsePayload.getField("aes_key");
+				// convert it to string from auto type
+				std::string aesKeyStr = std::get<std::string>(aesKey);
+				// convert it to vector of char
+				std::vector<char> aesKeyVec(aesKeyStr.begin(), aesKeyStr.end());
+
+				// compare the CRCs of the file
+                unsigned long serverCRC = session.getServerCRC(filePath, aesKeyVec);
+				unsigned long myCRC = session.getMyCRC(filePath);
+                int counter = 0;
+                while (counter < 4 && myCRC != serverCRC) {
+                    counter++;
+                    myCRC = session.getMyCRC(filePath);
+                    serverCRC = session.getServerCRC(filePath, aesKeyVec);
+                }
+                if (counter == 4) {
+                    std::cerr << "CRC comparison failed after 3 attempts.\tEnd the program" << std::endl;
+                    return 0;
+                }
+                else {
+					std::cout << "CRC comparison successful.\tEnd the program" << std::endl;
+					return 0;
+                }
 			}
+			else {
+				std::cerr << "Reconnection failed. Trying to register as a new user" << std::endl;
+            }
+        }
+		else { // if the file me does not exist
+			// register to the server - 825 request and get response 1600 if the registration is successful
+			// 1601 if the registration is failed
+			ResponseHeader responseHeader = session.registerUser(userName);
+			std::cout << responseHeader.toString() << std::endl;
+			ResponsePayload responsePayload = session.receiveResponsePayload(responseHeader);
+			std::cout << responsePayload.toString() << std::endl;
 
-			RequestPayload payload;
-			std::vector<char> userNameField = payload.stringToFixedSizeVector(userName, Constants::MAX_USERNAME_LENGTH + 1);
-			payload.addToPayload(userNameField);
+			if (responseHeader.getCode() == ResponseHeader::Code::RegistrationSuccess) {
+				ResponseHeader responseHeader = session.processClientIDAndSendPublicKey(responsePayload, userName);
+				std::cout << responseHeader.toString() << std::endl;
+				ResponsePayload responsePayload = session.receiveResponsePayload(responseHeader);
+				std::cout << responsePayload.toString() << std::endl;
 
-			std::string clientID = FileHandler::getSpecificLine(Constants::ME_FILE, Constants::ME_CLIENT_ID_LINE);
-			RequestHeader header(clientID, RequestHeader::VERSION, RequestHeader::Code::ReconnectingCode, payload.size());
-			Request request(header, payload);
-			std::vector<char> requestBytes = request.toBytes();
+				// get the aes key from the response payload
+				auto aesKey = responsePayload.getField("aes_key");
+				// convert it to string from auto type
+				std::string aesKeyStr = std::get<std::string>(aesKey);
+				// convert it to vector of char
+				std::vector<char> aesKeyVec(aesKeyStr.begin(), aesKeyStr.end());
 
-			boost::asio::write(socket, boost::asio::buffer(requestBytes, requestBytes.size()));
 
-			// Wait for server response
-			std::vector<char> responseHeaderBytes(Constants::HEADER_RESPONSE_SIZE);
-			boost::asio::read(socket, boost::asio::buffer(responseHeaderBytes, responseHeaderBytes.size()));
-
-			ResponseHeader responseHeader(responseHeaderBytes);
-
-			if (responseHeader.getCode() == ResponseHeader::Code::ReconnectionFailure) {
-				// If reconnect is unsuccessful (server responds with 1606):
-			   // TODO: Proceed to User Registration (Step 3)
+				if (responseHeader.getCode() == ResponseHeader::Code::PublicKeyReceived) {
+					unsigned long myCRC = session.getMyCRC(filePath);
+					unsigned long serverCRC = session.getServerCRC(filePath, aesKeyVec);
+					int counter = 0;
+					while (counter < 4 && myCRC != serverCRC) {
+						counter++;
+						myCRC = session.getMyCRC(filePath);
+						serverCRC = session.getServerCRC(filePath, aesKeyVec);
+					}
+					if (counter == 4) {
+						std::cerr << "CRC comparison failed after 3 attempts." << std::endl;
+						return 1;
+					}
+				}
 			}
-			else if (responseHeader.getCode() == ResponseHeader::Code::ReconnectionSuccess) {
-				// If reconnect is successful (server responds with 1605):
-				// Wait for payload (AES key)
-				std::vector<char> responsePayloadBytes(responseHeader.getPayloadSize());
-				boost::asio::read(socket, boost::asio::buffer(responsePayloadBytes, responsePayloadBytes.size()));
-				// TODO: Proceed to File Encryption and Transmission (Step 5)
+			else {
+				std::cerr << "Registration failed. End the program" << std::endl;
+				return 1;
 			}
-
-		}
-		else {
-			// TODO: Proceed to User Registration (Step 3)
-		}
-	}
-	catch (std::exception& e) {
-		std::cerr << "Error: " << e.what() << std::endl;
-	}
-
-	return 0;
+		} 
+    }
+    catch (std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+    return 0;
 }

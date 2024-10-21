@@ -31,3 +31,19 @@ std::string FileHandler::getSpecificLine(const std::string& filePath, size_t lin
     throw std::out_of_range("Line number " + std::to_string(lineNumber) + " out of range in file: " + filePath);
 }
 
+void FileHandler::writeToFile(const std::string& fileName, const std::string& content) {
+	std::ofstream file(fileName);
+
+	if (!file.is_open()) {
+		throw std::runtime_error("Could not open file: " + fileName);
+	}
+
+	file << content;
+	file.close();
+}
+
+int FileHandler::getFileSize(const std::string& filePath) {
+	std::ifstream file(filePath, std::ios::binary | std::ios::ate);
+	return file.tellg();
+}
+

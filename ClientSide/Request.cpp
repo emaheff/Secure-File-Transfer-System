@@ -20,6 +20,13 @@ std::vector<char> Request::toBytes() const {
 
 int Request::size() const {
 	return header.size() + payload.size();
-}	
+}
+
+std::string Request::toString() const {
+	std::ostringstream oss;
+	oss << "Request Header:\n" << header.toString() << "\n";
+	oss << "Request Payload:\n" << payload.toString() << "\n";
+	return oss.str();
+}
 
 

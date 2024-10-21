@@ -5,7 +5,8 @@
 #include <vector>
 #include <array>
 #include <string>
-
+#include <sstream>
+#include <iomanip>
 class RequestPayload
 {
 public:
@@ -16,6 +17,14 @@ public:
 	std::vector<char> getFlattenedPayload() const;
 	std::vector<char> stringToFixedSizeVector(const std::string& str, size_t n);
 	int size() const;
+	std::string toString() const;
+
+	void setContentSize(int size);
+	void setOrigFileSize(int size);
+	void setPacketNumber(int number);
+	void setTotalPackets(int number);
+	void setFileName(const std::string& fileName);
+	void setContent(const std::vector<char>& content);
 
 
 
