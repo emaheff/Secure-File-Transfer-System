@@ -43,7 +43,7 @@ std::vector<char> RequestHeader::toBytes() const {
 }
 
 int RequestHeader::size() const {
-	return 16 + 1 + 2 + 4; // clientID + version + code + payloadSize
+	return Constants::CLIENT_ID_SIZE + Constants::VERSION_SIZE + Constants::CODE_SIZE + Constants::PAYLOAD_SIZE_SIZE;
 }
 
 std::string RequestHeader::toString() const {
@@ -53,5 +53,9 @@ std::string RequestHeader::toString() const {
     oss << "Code: " << code << "\n";
     oss << "Payload Size: " << payloadSize << " bytes\n";
     return oss.str();
+}
+
+int RequestHeader::getCode() const {
+	return code;
 }
 

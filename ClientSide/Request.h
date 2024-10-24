@@ -8,8 +8,8 @@ class Request {
 public:
 	Request(RequestHeader header, RequestPayload payload);
 	
-	std::vector<char> toBytes() const;
-	int size() const;
+	std::vector<char> toBytes();
+	int size();
 	std::string toString() const;
 
 private:

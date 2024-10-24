@@ -11,7 +11,7 @@ class ResponseHeader:
         match code:
             case Constants.Response.REGISTER_SUCCESS | Constants.Response.CONFIRMATION_RESPONSE | \
                  Constants.Response.RETRY_CONNECTION_FAILURE | Constants.Response.PUBLIC_KEY_RESPONSE | \
-                    Constants.Response.RETRY_CONNECTION_SUCCESS:
+                 Constants.Response.RETRY_CONNECTION_SUCCESS:
                 self.payload_size = Constants.Response.CLIENT_ID_SIZE
             case Constants.Response.REGISTER_FAILURE | Constants.Response.GENERAL_FAILURE:
                 self.payload_size = 0  # no payload
@@ -27,6 +27,9 @@ class ResponseHeader:
 
     def setPayloadSize(self, payload_size):
         self.payload_size = payload_size
+
+    def getCode(self):
+        return self.code
 
     def __str__(self):
         return (f"Version: {self.version}\n"
@@ -69,10 +72,12 @@ class ResponsePayload:
                                    client_id_byte_stream, self.symmetric_key)
             case Constants.Response.FILE_UPLOAD_RESPONSE:
                 client_id_byte_stream = bytes.fromhex(self.client_id)
-                file_name_byte_stream = self.file_name.encode('utf-8')
+                file_name_bytes = self.file_name.encode('utf-8')[
+                                  :Constants.Response.FILE_NAME_SIZE]
+                file_name_bytes = file_name_bytes.ljust(Constants.Response.FILE_NAME_SIZE, b'\x00')
+
                 return struct.pack(f'<{Constants.Response.CLIENT_ID_SIZE}sI{Constants.Response.FILE_NAME_SIZE}sI'
-                                   , client_id_byte_stream, self.content_size,
-                                   file_name_byte_stream, self.crc)
+                                   , client_id_byte_stream, self.content_size, file_name_bytes, self.crc)
 
     def getSymmetricKeySizeInBytes(self):
         return len(self.symmetric_key)
@@ -91,7 +96,7 @@ class Response:
         self.payload = payload
 
     def toBytes(self):
-        return self.header.headerToBytes() + self.payload.payloadToBytes(self.header.code)
+        return self.header.headerToBytes() + self.payload.payloadToBytes(self.header.getCode())
 
     def __str__(self):
         return (f"Header: {self.header}\n"

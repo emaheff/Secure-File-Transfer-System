@@ -4,7 +4,7 @@
 
 Request::Request(RequestHeader header, RequestPayload payload) : header(header), payload(payload) {}
 
-std::vector<char> Request::toBytes() const {
+std::vector<char> Request::toBytes() {
 	std::vector<char> bytes;
 
 	// Convert the header to bytes and append them to the vector
@@ -12,13 +12,13 @@ std::vector<char> Request::toBytes() const {
 	bytes.insert(bytes.end(), headerBytes.begin(), headerBytes.end());
 
 	// Append the payload to the vector
-	std::vector<char> payloadBytes = payload.getFlattenedPayload();
+	std::vector<char> payloadBytes = payload.toBytes(header.getCode());
 	bytes.insert(bytes.end(), payloadBytes.begin(), payloadBytes.end());
 
 	return bytes;
 }
 
-int Request::size() const {
+int Request::size() {
 	return header.size() + payload.size();
 }
 

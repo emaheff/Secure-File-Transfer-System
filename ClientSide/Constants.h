@@ -29,6 +29,7 @@ namespace Constants {
 
     extern std::string TRANSFER_FILE; 
 	extern std::string ME_FILE; 
+	extern std::string PRIV_FILE; 
 
 	const int INFO_ADDRESS_AND_PORT_LINE = 1;
 	const int INFO_USERNAME_LINE = 2;

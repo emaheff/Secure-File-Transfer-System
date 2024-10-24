@@ -5,6 +5,7 @@
 #include <array>
 #include <string>
 #include <vector>
+#include "Constants.h"
 
 class RequestHeader
 {
@@ -14,6 +15,9 @@ public:
 	std::vector<char> toBytes() const;
 	int size() const;
     std::string toString() const;
+
+	int getCode() const;
+	int getPayloadSize() const;
 
     static const int VERSION;
 

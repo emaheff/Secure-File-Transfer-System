@@ -27,6 +27,9 @@ public:
     // Method to get a field from the payload
     std::variant<int, unsigned long, std::string> getField(const std::string& fieldName) const;
 
+    friend std::ostream& operator<<(std::ostream& os, const ResponsePayload& payload);
+
+
 
 
 private:
@@ -34,7 +37,7 @@ private:
     std::vector<std::pair<std::string, std::variant<int, unsigned long, std::string>>> attributes;
 
     // Helper functions
-    unsigned long readInt(const std::vector<char>& data, size_t offset) const;
+    int readNumber(const std::vector<char>& data, size_t offset, size_t byteCount) const;
     std::string readString(const std::vector<char>& data, size_t offset, size_t length) const;
 
     std::string hexify(const std::vector<char>& buffer);

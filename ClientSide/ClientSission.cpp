@@ -1,17 +1,5 @@
 #include "ClientSission.h"
 
-    
-   
-
-std::string hexify(const std::vector<char>& buffer) {
-    std::stringstream ss;
-    ss << std::hex;
-    for (size_t i = 0; i < buffer.size(); ++i) {
-        ss << std::setfill('0') << std::setw(2) << (0xFF & buffer[i]);
-    }
-    return ss.str();
-}
-
 using boost::asio::ip::tcp;
 using namespace boost::asio;
 
@@ -29,6 +17,9 @@ ResponseHeader ClientSession::reconnect() {
 
     std::string clientID = FileHandler::getSpecificLine(Constants::ME_FILE, Constants::ME_CLIENT_ID_LINE);
     Request request = prepareReconnectionRequest(userName, clientID);
+
+	std::cout << std::string(80, '-') << "\nSending reconnection request to the server...\n" << std::string(80, '-') << std::endl;
+
 	std::cout << request.toString() << std::endl;
     sendRequest(request);
     return receiveResponseHeader();    
@@ -36,6 +27,7 @@ ResponseHeader ClientSession::reconnect() {
 
 ResponseHeader ClientSession::registerUser(std::string& userName) {
     Request request = prepareRegistrationRequest(userName);
+	std::cout << std::string(80, '-') << "\nSending registration request to the server...\n" << std::string(80, '-') << std::endl;
     std::cout << request.toString() << std::endl;
     sendRequest(request);
 
@@ -59,11 +51,14 @@ ResponseHeader ClientSession::processClientIDAndSendPublicKey(ResponsePayload re
         FileHandler::writeToFile(Constants::ME_FILE, userName + "\n" + clientID);
 
         // generate public and private RSA keys. save the private in priv.key and send the public to the server
-        std::vector<char> publicKeyVec = generateAndSaveRSAKeys();
+        std::string publicKey = generateAndSaveRSAKeys();
 
         // create new request such that the request header is clientID, version, code, payloadSize
         // and the payload is userName and public key
-        Request publicKeyRequest = preparePublicKeySubmissionRequest(clientID, userName, publicKeyVec);
+        Request publicKeyRequest = preparePublicKeySubmissionRequest(clientID, userName, publicKey);
+
+		std::cout << std::string(80, '-') << "\nSending public key to the server...\n" << std::string(80, '-') << std::endl;
+
         std::cout << publicKeyRequest.toString() << std::endl;
         sendRequest(publicKeyRequest);
 
@@ -84,8 +79,7 @@ void ClientSession::connectToServer(const std::string& address, const std::strin
 
 Request ClientSession::prepareReconnectionRequest(const std::string& userName, const std::string& clientID) {
     RequestPayload payload;
-    std::vector<char> userNameField = payload.stringToFixedSizeVector(userName, Constants::MAX_USERNAME_LENGTH + 1);
-    payload.addToPayload(userNameField);
+	payload.setUserName(userName);
     RequestHeader header(clientID, RequestHeader::VERSION, RequestHeader::Code::ReconnectingCode, payload.size());
     return Request(header, payload);
 }
@@ -94,12 +88,11 @@ Request ClientSession::prepareRegistrationRequest(const std::string& userName) {
     std::string tempClientID = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
     RequestHeader header(tempClientID, RequestHeader::VERSION, RequestHeader::Code::RegistrationCode, Constants::USERNAME_SIZE);
     RequestPayload payload;
-    std::vector<char> userNameField = payload.stringToFixedSizeVector(userName, Constants::MAX_USERNAME_LENGTH + 1);
-    payload.addToPayload(userNameField);
+	payload.setUserName(userName);
     return Request(header, payload);
 }
 
-void ClientSession::sendRequest(const Request& request) {
+void ClientSession::sendRequest(Request& request) {
     std::vector<char> requestBytes = request.toBytes();
     int size = requestBytes.size();
     boost::asio::write(socket, boost::asio::buffer(requestBytes, size));
@@ -111,37 +104,49 @@ ResponseHeader ClientSession::receiveResponseHeader() {
     return ResponseHeader(responseHeaderBytes);
 }
 
-std::vector<char> ClientSession::generateAndSaveRSAKeys() {
+std::string ClientSession::generateAndSaveRSAKeys() {
     // Generate RSA keys (private and public)
     RSAPrivateWrapper rsaPrivate;
 
-    // Save the private key to a file
+    // Get the private key as a string
     std::string privateKeyStr = rsaPrivate.getPrivateKey();
-    std::ofstream privFile("priv.key", std::ios::out | std::ios::binary);
+
+    // Encode the private key using Base64
+    std::string encodedPrivateKey = Base64Wrapper::encode(privateKeyStr);
+
+    // Save the encoded private key to a file
+    std::ofstream privFile(Constants::PRIV_FILE, std::ios::out | std::ios::binary);
     if (privFile.is_open()) {
-        privFile << privateKeyStr;  // Save private key as string in the file
+        privFile << encodedPrivateKey;  // Save the Base64-encoded private key to the file
         privFile.close();
     }
     else {
-        throw std::runtime_error("Failed to open priv.key for writing");
+        throw std::runtime_error("Failed to open" + Constants::PRIV_FILE + "for writing");
+    }
+
+    std::ofstream meInfoFile(Constants::ME_FILE, std::ios::app);  // Open in append mode
+    if (meInfoFile.is_open()) {
+        meInfoFile << "\n" << encodedPrivateKey;  // Append the private key after the last line
+        meInfoFile.close();
+    }
+    else {
+        throw std::runtime_error("Failed to open" + Constants::ME_FILE + "for appending private key");
     }
 
     // Get the public key from the private wrapper
-    std::string publicKeyStr = rsaPrivate.getPublicKey();
+    std::string publicKey = rsaPrivate.getPublicKey();
 
-    // Convert the public key string to a vector of chars
-    std::vector<char> publicKeyVec(publicKeyStr.begin(), publicKeyStr.end());
 
-    // SReturn the public key vector
-    return publicKeyVec;
+    // Return the public key vector
+    return publicKey;
 }
 
 
-Request ClientSession::preparePublicKeySubmissionRequest(const std::string& clientId, const std::string& userName,  const std::vector<char>& publicKey) {
+
+Request ClientSession::preparePublicKeySubmissionRequest(const std::string& clientId, const std::string& userName,  const std::string& publicKey) {
 	RequestPayload payload;
-	std::vector<char> userNameFiled = payload.stringToFixedSizeVector(userName, Constants::MAX_USERNAME_LENGTH + 1);
-	payload.addToPayload(userNameFiled);
-	payload.addToPayload(publicKey);
+	payload.setUserName(userName);
+	payload.setPublicKey(publicKey);
 	RequestHeader header(clientId, Constants::VERSION, RequestHeader::Code::PublicKeyCode, payload.size());
 	return Request(header, payload);
 }
@@ -190,35 +195,28 @@ std::vector<char> ClientSession::encryptFileWithAES(const std::string& filePath,
 }
 
 std::string ClientSession::decryptAESKey(const std::vector<char>& encryptedAESKey) {
-    // Load the private RSA key from priv.key
-    std::ifstream privFile("priv.key", std::ios::in | std::ios::binary);
+    // Load the Base64-encoded private RSA key from priv.key
+    std::ifstream privFile(Constants::PRIV_FILE, std::ios::in | std::ios::binary);
     if (!privFile.is_open()) {
-        throw std::runtime_error("Failed to open priv.key for reading.");
+        throw std::runtime_error("Failed to open" + Constants::PRIV_FILE + "for reading.");
     }
 
-    std::string privateKeyStr((std::istreambuf_iterator<char>(privFile)), std::istreambuf_iterator<char>());
+    std::string encodedPrivateKey((std::istreambuf_iterator<char>(privFile)), std::istreambuf_iterator<char>());
     privFile.close();
+
+    // Decode the private key from Base64
+    std::string privateKeyStr = Base64Wrapper::decode(encodedPrivateKey);
 
     // Use RSAPrivateWrapper to decrypt the AES key
     RSAPrivateWrapper rsaPrivate(privateKeyStr);
     std::string decryptedAESKeyStr = rsaPrivate.decrypt(encryptedAESKey.data(), encryptedAESKey.size());
 
-    return decryptedAESKeyStr; // Return the decrypted AES key as a string
+    return decryptedAESKeyStr;  // Return the decrypted AES key as a string
 }
 
+
 unsigned long ClientSession::getMyCRC(std::string& filePath) {
-    // Step 1: Open the file and read its content
-    std::ifstream file(filePath, std::ios::in | std::ios::binary);
-    if (!file.is_open()) {
-        throw std::runtime_error("Failed to open the file.");
-    }
-
-    // Step 2: Read file content into a vector of chars
-    std::vector<char> fileContent((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    file.close();
-
-    // Step 3: Calculate CRC using CRC32Calculator
-    return CRC32Calculator::calculate(fileContent);
+    return CRC_Calculator::readFile(filePath);
 }
 
 unsigned long ClientSession::getServerCRC(std::string& filePath, std::vector<char> encryptedAESKey){
@@ -231,6 +229,9 @@ unsigned long ClientSession::getServerCRC(std::string& filePath, std::vector<cha
     // Calculate the number of packets to send ceiling value
     int numPackets = (encryptedFileSize + messageContentSize - 1) / messageContentSize;
 	int packetNumber = 1;
+
+	std::cout << std::string(80, '-') << "\nSending the file to the server in " << numPackets << " packets...\n" << std::string(80, '-') << std::endl;
+
 
 	// Send the file in packets
     for (packetNumber; packetNumber <= numPackets; packetNumber++) {
@@ -263,10 +264,13 @@ unsigned long ClientSession::getServerCRC(std::string& filePath, std::vector<cha
         sendRequest(request);	
     }   
 	// Receive the final response - contains the CRC
+
+	std::cout << std::string(80, '-') << "\nFile sent. Waiting for the server to calculate the CRC...\n" << std::string(80, '-') << std::endl;
+
     ResponseHeader finalResponseHeader = receiveResponseHeader();
 	std::cout << finalResponseHeader.toString() << std::endl;
-	ResponsePayload responsePayload = receiveResponsePayload(finalResponseHeader);
-	std::cout << responsePayload.toString() << std::endl;
+	ResponsePayload responsePayload = receiveResponsePayload(finalResponseHeader); // 
+	std::cout << responsePayload << std::endl;
 
     if (finalResponseHeader.getCode() == ResponseHeader::Code::FileReceived) {
         try {

@@ -48,7 +48,7 @@
     <ClCompile Include="RSAWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CRC32Calculator.cpp">
+    <ClCompile Include="CRC_Calculator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ResponsePayload.cpp">
@@ -86,10 +86,10 @@
     <ClInclude Include="RSAWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CRC32Calculator.h">
+    <ClInclude Include="ResponsePayload.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ResponsePayload.h">
+    <ClInclude Include="CRC_Calculator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -310,7 +310,8 @@ class ServerSession:
 
         response = Response.Response(response_header, response_payload)
         print(response)
-        self.conn.send(response.toBytes())
+        data_to_send = response.toBytes()
+        self.conn.send(data_to_send)
 
     def _find_username_by_uuid(self, uuid):
         for username, user in self.users.items():

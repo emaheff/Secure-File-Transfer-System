@@ -12,15 +12,17 @@ std::string ResponsePayload::hexify(const std::vector<char>& buffer) {
 }
 
 // Helper function to read an integer from a vector of chars
-unsigned long ResponsePayload::readInt(const std::vector<char>& data, size_t offset) const {
-    if (offset + 4 > data.size()) {
-        throw std::out_of_range("Not enough data to read an int");
+int ResponsePayload::readNumber(const std::vector<char>& data, size_t offset, size_t byteCount) const {
+    if (offset + byteCount > data.size()) {
+        throw std::out_of_range("Not enough data to read the number of bytes");
     }
-    uint32_t value = (static_cast<uint8_t>(data[offset]) << 24) |
-        (static_cast<uint8_t>(data[offset + 1]) << 16) |
-        (static_cast<uint8_t>(data[offset + 2]) << 8) |
-        (static_cast<uint8_t>(data[offset + 3]));
-    return static_cast<unsigned long>(value);
+
+    int value = 0;
+    for (size_t i = 0; i < byteCount; ++i) {
+        value |= (static_cast<unsigned char>(data[offset + i]) << (i * 8)); // Shift by i * 8 to reflect little-endian
+    }
+
+    return value;
 }
 
 // Helper function to read a string from a vector of chars
@@ -69,7 +71,7 @@ ResponsePayload::ResponsePayload(const ResponseHeader& header, const std::vector
             offset += Constants::CLIENT_ID_SIZE;
 
             // Content Size (4 bytes)
-            int contentSize = readInt(payloadData, offset);
+            int contentSize = readNumber(payloadData, offset, Constants::CONTENT_SIZE_SIZE);
             attributes.push_back({ "content_size", contentSize });
             offset += Constants::CONTENT_SIZE_SIZE;
 
@@ -79,7 +81,7 @@ ResponsePayload::ResponsePayload(const ResponseHeader& header, const std::vector
             offset += Constants::FILE_NAME_SIZE;
 
             // Checksum (4 bytes)
-            unsigned long cksum = readInt(payloadData, offset);
+            unsigned long cksum = readNumber(payloadData, offset, Constants::CKSUM_SIZE);
             attributes.push_back({ "cksum", cksum });
             offset += Constants::CKSUM_SIZE;
         }
@@ -104,6 +106,9 @@ std::string ResponsePayload::toString() const {
         if (std::holds_alternative<int>(attr.second)) {
             oss << std::get<int>(attr.second);
         }
+        else if (std::holds_alternative<unsigned long>(attr.second)) {
+            oss << std::get<unsigned long>(attr.second);
+        }
         else if (std::holds_alternative<std::string>(attr.second)) {
             oss << std::get<std::string>(attr.second);
         }
@@ -122,5 +127,11 @@ std::variant<int, unsigned long, std::string> ResponsePayload::getField(const st
     // If the field is not found, throw an exception
     throw std::invalid_argument("Field not found: " + fieldName);
 }
+
+std::ostream& operator<<(std::ostream& os, const ResponsePayload& payload) {
+    os << payload.toString();
+    return os;
+}
+
 
 

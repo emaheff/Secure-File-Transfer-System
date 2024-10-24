@@ -12,7 +12,7 @@
 #include "Constants.h"
 #include "RSAWrapper.h"
 #include "AESWrapper.h"
-#include "CRC32Calculator.h"
+#include "CRC_Calculator.h"
 #include <rsa.h>
 #include <osrng.h>
 #include <files.h>
@@ -61,15 +61,15 @@ private:
     Request prepareRegistrationRequest(const std::string& userName);
 
     // Send a request to the server
-    void sendRequest(const Request& request);
+    void sendRequest(Request& request);
 
     
 
     // Generate RSA keys and save the private key
-    std::vector<char> generateAndSaveRSAKeys();
+    std::string generateAndSaveRSAKeys();
 
 	// Prepare the public key submission request to be sent to the server
-	Request preparePublicKeySubmissionRequest(const std::string& clientId, const std::string& userName, const std::vector<char>& publicKey);
+	Request preparePublicKeySubmissionRequest(const std::string& clientId, const std::string& userName, const std::string& publicKey);
 
     std::string decryptAESKey(const std::vector<char>& encryptedAESKey);
 
