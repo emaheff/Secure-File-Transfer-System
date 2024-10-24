@@ -30,40 +30,42 @@ class ServerSession:
                 break
             request_header = Request.RequestHeader(raw_header_data)
             code = request_header.getCode()
-            print(request_header)
 
             # Handle different request codes
             match code:
-                # request 825
+                # request code 825
                 case Constants.Request.REGISTER_REQUEST:
                     self._handle_register_request(request_header)
-                # request 826
+                # request code 826
                 case Constants.Request.PUBLIC_KEY_SUBMISSION_REQUEST:
                     self._handle_public_key_submission(request_header)
-                # request 827
+                # request code 827
                 case Constants.Request.RECONNECTION_REQUEST:
                     self._handle_reconnection_request(request_header)
-                # request 828
+                # request code 828
                 case Constants.Request.FILE_UPLOAD_REQUEST:
                     self._handle_file_upload_request(request_header)
-                # request 900, 902
+                # request codes 900, 902
                 case Constants.Request.CRC_CONFIRMATION_REQUEST | Constants.Request.CRC_FAILURE_NOTIFICATION_REQUEST:
                     self._handle_crc_confirmation_or_fatal_error(request_header)
-                # request 901
+                # request code 901
                 case Constants.Request.RETRY_REQUEST:
                     pass
 
     def _handle_register_request(self, request_header):
+        print(Constants.___ * "-" + '\nReceiving registration request from a client\n' + Constants.___ * "-")
+
         #  Receive the payload data
         payload_data = self._receive_payload_data(request_header)
         if payload_data is None:
             self._send_general_failure(request_header)
             return
 
-        payload = Request.RequestPayload(payload_data, request_header.getCode(), request_header.getPayloadSize())
-        print(payload)
+        request_payload = Request.RequestPayload(payload_data, request_header.getCode(), request_header.getPayloadSize())
+        print(request_header)
+        print(request_payload)
 
-        if not self._register_user(payload.getUserName(), request_header):
+        if not self._register_user(request_payload.getUserName(), request_header):
             self._send_register_failure(request_header)
             return
 
@@ -74,16 +76,19 @@ class ServerSession:
             self._send_general_failure(request_header)
             return
 
-        payload = Request.RequestPayload(payload_data, request_header.getCode(), request_header.getPayloadSize())
-        print(payload)
-        public_key = payload.getPublicKey()
+        request_payload = Request.RequestPayload(payload_data, request_header.getCode(), request_header.getPayloadSize())
+
+        print(Constants.___ * "-" + '\nReceiving public key submission from the client\n' + Constants.___ * "-")
+        print(request_header)
+        print(request_payload)
+        public_key = request_payload.getPublicKey()
 
         # Store the public key in the user object
-        if not self._store_public_key(payload.getUserName(), public_key, request_header):
+        if not self._store_public_key(request_payload.getUserName(), public_key, request_header):
             self._send_general_failure(request_header)
 
         # Create and send AES key response
-        self._send_encrypted_aes_key(payload.getUserName(), public_key, request_header,
+        self._send_encrypted_aes_key(request_payload.getUserName(), public_key, request_header,
                                      Constants.Response.PUBLIC_KEY_RESPONSE)
 
     def _handle_reconnection_request(self, request_header):
@@ -92,10 +97,14 @@ class ServerSession:
         if payload_data is None:
             self._send_general_failure(request_header)
             return
-        # check if the user is registered
+
         request_payload = Request.RequestPayload(payload_data, request_header.getCode(), request_header.getPayloadSize())
+        print(Constants.___ * "-" + '\nReceiving reconnection request from a client\n' + Constants.___ * "-")
+        print(request_header)
         print(request_payload)
         username = request_payload.getUserName()
+
+        # check if the user is registered
         with self.lock:
             if username not in self.users:
                 # User not found, return error
@@ -116,7 +125,7 @@ class ServerSession:
             return
 
         # Parse the request payload
-        payload = Request.RequestPayload(payload_data, request_header.getCode(), request_header.getPayloadSize())
+        request_payload = Request.RequestPayload(payload_data, request_header.getCode(), request_header.getPayloadSize())
         username = self._find_username_by_uuid(request_header.getClientId())
 
         # Verify user and AES key
@@ -124,14 +133,20 @@ class ServerSession:
         if user is None or symmetric_key is None:
             return
 
-        packet_number = payload.getPacketNumber()
-        total_packets = payload.getTotalPackets()
+        packet_number = request_payload.getPacketNumber()
+        total_packets = request_payload.getTotalPackets()
         # Write the file part
-        file_name = payload.getFileName()
-        encrypted_file_part = payload.getMessageContent()
+        file_name = request_payload.getFileName()
+        encrypted_file_part = request_payload.getMessageContent()
         if encrypted_file_part is None:
             print(f'encrypted_file_part is None\npacket number: {packet_number}')
         self._write_file_part(user, file_name, encrypted_file_part)
+
+        if packet_number == 1:
+            print(Constants.___ * "-" + f'\nReceiving file upload request from the client in {total_packets} packets\n'
+                  + Constants.___ * "-")
+            print(request_header)
+            print(request_payload)
 
         # If this is the last packet, process the file
         if packet_number == total_packets:
@@ -159,7 +174,7 @@ class ServerSession:
     def _send_general_failure(self, request_header):
         response_header = Response.ResponseHeader(request_header.getVersion(),
                                                   Constants.Response.GENERAL_FAILURE)
-        self.conn.send(response_header.headerToBytes())
+        self.conn.send(response_header.toBytes())
 
     def _receive_payload_data(self, request_header):
         payload_size = request_header.getPayloadSize()
@@ -181,6 +196,7 @@ class ServerSession:
 
     def _send_encrypted_aes_key(self, username, public_key, request_header, code):
         try:
+            print(Constants.___ * "-" + '\nCreating and sending encrypted AES key to the client\n' + Constants.___ * "-")
             aes_key = get_random_bytes(Constants.Crypto.AES_KEY_SIZE)  # 32 bytes
             rsa_key = RSA.import_key(public_key)
             cipher_rsa = PKCS1_OAEP.new(rsa_key)
@@ -216,13 +232,17 @@ class ServerSession:
     def _send_register_failure(self, request_header):
         response_header = Response.ResponseHeader(request_header.getVersion(),
                                                   Constants.Response.REGISTER_FAILURE)
-        self.conn.send(response_header.headerToBytes())
+        print(Constants.___ * "-" + '\nSending registration failure response to the client\n' + Constants.___ * "-")
+        print(response_header)
+        self.conn.send(response_header.toBytes())
 
     def _send_register_success(self, generated_uuid, request_header):
         response_header = Response.ResponseHeader(request_header.getVersion(),
                                                   Constants.Response.REGISTER_SUCCESS)
         response_payload = Response.ResponsePayload(generated_uuid)
         response = Response.Response(response_header, response_payload)
+        print(Constants.___ * "-" + '\nSending registration success response to the client\n' + Constants.___ * "-")
+        print(response)
         self.conn.send(response.toBytes())
 
     def _send_reconnection_failure(self, request_header):
@@ -265,6 +285,8 @@ class ServerSession:
         encrypted_file_path = f"{user_directory}/{file_name}.enc"
         decrypted_file_path = f"{user_directory}/{file_name}"
 
+        print(Constants.___ * "-" + f'\nDecrypting the encrypted received file - {file_name}\n' + Constants.___ * "-")
+
         # Decrypt the file
         try:
             decrypted_data = self._decrypt_file(encrypted_file_path, symmetric_key)
@@ -275,6 +297,10 @@ class ServerSession:
             self._send_general_failure(request_header)
             return
 
+        print(Constants.___ * "-" + f'\nCalculating CRC value of the decrypted file - {file_name}\n'
+              + Constants.___ * "-")
+
+        # Calculate the CRC value of the decrypted file
         crc_value = cksum.memcrc(decrypted_data)
 
         # Send the response
@@ -309,6 +335,7 @@ class ServerSession:
         response_payload.setCrc(crc_value)
 
         response = Response.Response(response_header, response_payload)
+        print(Constants.___ * "-" + f'\nSending file upload response for the file - {file_name}\n' + Constants.___ * "-")
         print(response)
         data_to_send = response.toBytes()
         self.conn.send(data_to_send)

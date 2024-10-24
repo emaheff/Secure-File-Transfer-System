@@ -1,4 +1,5 @@
 class Request:
+    # request codes
     REGISTER_REQUEST = 825
     PUBLIC_KEY_SUBMISSION_REQUEST = 826
     RECONNECTION_REQUEST = 827
@@ -7,6 +8,10 @@ class Request:
     RETRY_REQUEST = 901
     CRC_FAILURE_NOTIFICATION_REQUEST = 902
 
+    REQUEST_CODE_LIST = [REGISTER_REQUEST, PUBLIC_KEY_SUBMISSION_REQUEST, RECONNECTION_REQUEST, FILE_UPLOAD_REQUEST,
+                         CRC_CONFIRMATION_REQUEST, RETRY_REQUEST, CRC_FAILURE_NOTIFICATION_REQUEST]
+
+    # sizes as required by the protocol for request payload
     USER_NAME_SIZE = 255
     PUBLIC_KEY_SIZE = 160
     PACKET_SIZE = 1024
@@ -16,6 +21,7 @@ class Request:
     PACKET_NUMBER_SIZE = 2
     TOTAL_PACKETS_SIZE = 2
 
+    # sizes as required by the protocol for the request header
     CLIENT_ID_SIZE = 16
     VERSION_SIZE = 1
     CODE_SIZE = 2
@@ -28,6 +34,8 @@ class Request:
 
 
 class Response:
+
+    # response codes
     REGISTER_SUCCESS = 1600
     REGISTER_FAILURE = 1601
     PUBLIC_KEY_RESPONSE = 1602
@@ -37,11 +45,13 @@ class Response:
     RETRY_CONNECTION_FAILURE = 1606
     GENERAL_FAILURE = 1607
 
+    # sizes as required by the protocol for response payload
     CLIENT_ID_SIZE = 16
-    PACKET_SIZE = 1024
     FILE_NAME_SIZE = 255
     CRC_SIZE = 4
     CONTENT_SIZE_SIZE = 4
+
+    PACKET_SIZE = 1024
 
 
 class Constants:
@@ -52,3 +62,6 @@ class Constants:
 
 class Crypto:
     AES_KEY_SIZE = 32
+
+
+___ = 80
