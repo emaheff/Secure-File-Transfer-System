@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\DELL\crypto++\cryptopp\</FILEPATH>
+      <FILENAME>cryptlib.h</FILENAME>
+      <LINE>1662</LINE>
+      <COLUMN>1</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'CryptoPP::BufferedTransformation::m_buf' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>CryptoPP::BufferedTransformation::{ctor}</FUNCTION>
+    <DECORATED>??0BufferedTransformation@CryptoPP@@QAE@XZ</DECORATED>
+    <FUNCLINE>1662</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>CryptoPP::BufferedTransformation::m_buf</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\DELL\crypto++\cryptopp\</FILEPATH>
+      <FILENAME>queue.h</FILENAME>
+      <LINE>265</LINE>
+      <COLUMN>23</COLUMN>
+    </SFA>
+    <DEFECTCODE>26439</DEFECTCODE>
+    <DESCRIPTION>This kind of function should not throw. Declare it 'noexcept' (f.6).</DESCRIPTION>
+    <FUNCTION>std::swap</FUNCTION>
+    <DECORATED>??$swap@VByteQueue@CryptoPP@@$0A@@std@@YAXAAVByteQueue@CryptoPP@@0@Z</DECORATED>
+    <FUNCLINE>265</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\DELL\crypto++\cryptopp\</FILEPATH>
+      <FILENAME>algebra.h</FILENAME>
+      <LINE>238</LINE>
+      <COLUMN>0</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'CryptoPP::AbstractRing&lt;CryptoPP::Integer&gt;::MultiplicativeGroupT::m_pRing' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>CryptoPP::AbstractRing&lt;CryptoPP::Integer&gt;::MultiplicativeGroupT::{ctor}</FUNCTION>
+    <DECORATED>??0MultiplicativeGroupT@?$AbstractRing@VInteger@CryptoPP@@@CryptoPP@@QAE@XZ</DECORATED>
+    <FUNCLINE>238</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>CryptoPP::AbstractRing&lt;CryptoPP::Integer&gt;::MultiplicativeGroupT::m_pRing</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\DELL\crypto++\cryptopp\</FILEPATH>
+      <FILENAME>secblock.h</FILENAME>
+      <LINE>360</LINE>
+      <COLUMN>1</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'CryptoPP::FixedSizeAllocatorWithCleanup&lt;unsigned __int64,16,CryptoPP::NullAllocator&lt;unsigned __int64&gt;,1&gt;::m_array' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>CryptoPP::FixedSizeAllocatorWithCleanup&lt;unsigned __int64,16,CryptoPP::NullAllocator&lt;unsigned __int64&gt;,1&gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$FixedSizeAllocatorWithCleanup@_K$0BA@V?$NullAllocator@_K@CryptoPP@@$00@CryptoPP@@QAE@XZ</DECORATED>
+    <FUNCLINE>360</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>CryptoPP::FixedSizeAllocatorWithCleanup&lt;unsigned __int64,16,CryptoPP::NullAllocator&lt;unsigned __int64&gt;,1&gt;::m_array</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\DELL\crypto++\cryptopp\</FILEPATH>
+      <FILENAME>secblock.h</FILENAME>
+      <LINE>584</LINE>
+      <COLUMN>1</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'CryptoPP::FixedSizeAllocatorWithCleanup&lt;unsigned __int64,16,CryptoPP::NullAllocator&lt;unsigned __int64&gt;,0&gt;::m_array' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>CryptoPP::FixedSizeAllocatorWithCleanup&lt;unsigned __int64,16,CryptoPP::NullAllocator&lt;unsigned __int64&gt;,0&gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$FixedSizeAllocatorWithCleanup@_K$0BA@V?$NullAllocator@_K@CryptoPP@@$0A@@CryptoPP@@QAE@XZ</DECORATED>
+    <FUNCLINE>584</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>CryptoPP::FixedSizeAllocatorWithCleanup&lt;unsigned __int64,16,CryptoPP::NullAllocator&lt;unsigned __int64&gt;,0&gt;::m_array</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\DELL\crypto++\cryptopp\</FILEPATH>
+      <FILENAME>secblock.h</FILENAME>
+      <LINE>360</LINE>
+      <COLUMN>1</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'CryptoPP::FixedSizeAllocatorWithCleanup&lt;unsigned int,16,CryptoPP::NullAllocator&lt;unsigned int&gt;,1&gt;::m_array' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>CryptoPP::FixedSizeAllocatorWithCleanup&lt;unsigned int,16,CryptoPP::NullAllocator&lt;unsigned int&gt;,1&gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$FixedSizeAllocatorWithCleanup@I$0BA@V?$NullAllocator@I@CryptoPP@@$00@CryptoPP@@QAE@XZ</DECORATED>
+    <FUNCLINE>360</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>CryptoPP::FixedSizeAllocatorWithCleanup&lt;unsigned int,16,CryptoPP::NullAllocator&lt;unsigned int&gt;,1&gt;::m_array</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\DELL\crypto++\cryptopp\</FILEPATH>
+      <FILENAME>secblock.h</FILENAME>
+      <LINE>584</LINE>
+      <COLUMN>1</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'CryptoPP::FixedSizeAllocatorWithCleanup&lt;unsigned int,16,CryptoPP::NullAllocator&lt;unsigned int&gt;,0&gt;::m_array' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>CryptoPP::FixedSizeAllocatorWithCleanup&lt;unsigned int,16,CryptoPP::NullAllocator&lt;unsigned int&gt;,0&gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$FixedSizeAllocatorWithCleanup@I$0BA@V?$NullAllocator@I@CryptoPP@@$0A@@CryptoPP@@QAE@XZ</DECORATED>
+    <FUNCLINE>584</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>CryptoPP::FixedSizeAllocatorWithCleanup&lt;unsigned int,16,CryptoPP::NullAllocator&lt;unsigned int&gt;,0&gt;::m_array</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>

@@ -1,134 +1,154 @@
 #include <boost/asio.hpp>
 #include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <sstream>
 
 #include "FileHandler.h"
 #include "RequestPayload.h"
-#include "RequestHeader.h"
-#include "Request.h"
 #include "Constants.h"
 #include "ResponseHeader.h"
 #include "ResponsePayload.h"
 #include "ClientSission.h"
 
+/**
+ * @brief Compares the CRC values of the local file and the file on the server.
+ *
+ * This function compares the CRC of the local file with the CRC provided by the server
+ * after encryption. It retries up to 3 times if the CRCs do not match.
+ *
+ * @param session The current client session used to communicate with the server.
+ * @param filePath The file path to the local file for which the CRC needs to be calculated.
+ * @param aesKeyVec The AES key vector used for encryption/decryption.
+ * @return true if the CRCs match, false otherwise.
+ */
+bool compareCRCs(ClientSession& session, std::string& filePath, const std::vector<char>& aesKeyVec, const std::string& clientId) {
 
+	unsigned long myCrc = session.getMyCRC(filePath);
+	unsigned long serverCrc = session.getServerCRC(filePath, aesKeyVec, clientId);
+
+	// try up to 3 times to compare CRCs
+	int counter = 0;
+	while (counter < 4 && myCrc != serverCrc) {
+		counter++;
+		myCrc = session.getMyCRC(filePath);
+		serverCrc = session.getServerCRC(filePath, aesKeyVec, clientId);
+	}
+
+	if (counter == 4) {
+		std::cerr << std::string(Constants::___, '-') << "\nCRC comparison failed after 3 attempts.\tEnd the program\n" << std::string(Constants::___, '-') << std::endl;
+		return false;
+	}
+	
+	std::cout << std::string(Constants::___, '-') << "\nCRC comparison successful.\tEnd the program\n" << std::string(Constants::___, '-') << std::endl;
+	return true;
+}
+
+/**
+ * @brief Registers a new user with the server.
+ *
+ * This function handles the user registration process with the server.
+ *
+ * @param session The current client session used to communicate with the server.
+ * @param userName The username of the client.
+ * @param filePath The file path to the local file for which the CRC needs to be calculated.
+ * @return true if registration and CRC comparison are successful, false otherwise.
+ */
+bool registerNewUser(ClientSession& session, std::string& userName, std::string& filePath) {
+
+	std::cout << std::string(Constants::___, '-') << "\nNo " << Constants::ME_FILE << " file found.\nRegistering as a new user...\n" << std::string(Constants::___, '-') << std::endl;
+	// Register the user with the server and receive the response header
+	ResponseHeader responseHeader = session.registerUser(userName);
+	std::cout << std::string(Constants::___, '-') << "\nReceiving response payload to registration request...\n" << std::string(Constants::___, '-') << std::endl;
+	std::cout << responseHeader << std::endl;
+
+	// Receive the response payload
+	ResponsePayload responsePayload = session.receiveResponsePayload(responseHeader);
+	std::cout << responsePayload << std::endl;
+
+	if (responseHeader.getCode() == ResponseHeader::Code::RegistrationSuccess) {
+		// Process the client ID and send the public key send public key request and get the response header
+		ResponseHeader publicKeyResponseHeader = session.processClientIDAndSendPublicKey(responsePayload, userName);
+		std::cout << publicKeyResponseHeader << std::endl;
+
+		// Receive the response payload
+		ResponsePayload publicKeyResponsePayload = session.receiveResponsePayload(publicKeyResponseHeader);
+		std::cout << publicKeyResponsePayload << std::endl;
+
+		// get the aes key from the response payload and use it to compare CRCs
+		auto aesKey = publicKeyResponsePayload.getField("aes_key");
+		std::string aes_key_str = std::get<std::string>(aesKey);
+		std::vector<char> aesKeyVec(aes_key_str.begin(), aes_key_str.end());
+
+		std::string clientId = std::get<std::string>(responsePayload.getField("client_id"));
+
+		return compareCRCs(session, filePath, aesKeyVec, clientId);
+	}
+	std::cerr << "Registration failed.\nEnd the program" << std::endl;
+	return false;
+}
+
+/**
+ * @brief Reconnects the client to the server.
+ *
+ * This function handles the reconnection process of the client to the server.
+ *
+ * @param session The current client session used to communicate with the server.
+ * @param filePath The file path to the local file for which the CRC needs to be calculated.
+ * @return true if reconnection and CRC comparison are successful, false otherwise.
+ */
+bool reconnectToServer(ClientSession& session, std::string& filePath) {
+
+	std::cout << std::string(Constants::___, '-') << "\nReconnecting to the server...\n" << std::string(Constants::___, '-') << std::endl;
+	// Reconnect to the server and receive the response header
+	ResponseHeader responseHeader = session.reconnect();
+	std::cout << std::string(Constants::___, '-') << "\nReceiving response payload to reconnecting request...\n" << std::string(Constants::___, '-') << std::endl;
+	std::cout << responseHeader << std::endl;
+
+	// Receive the response payload
+	ResponsePayload responsePayload = session.receiveResponsePayload(responseHeader);
+	std::cout << responsePayload << std::endl;
+
+	if (responseHeader.getCode() == ResponseHeader::Code::ReconnectionSuccess) {
+
+		// get the aes key from the response payload and use it to compare CRCs
+		auto aesKey = responsePayload.getField("aes_key");
+		std::string aes_key_str = std::get<std::string>(aesKey);
+		std::vector<char> aesKeyVec(aes_key_str.begin(), aes_key_str.end());
+
+		std::string clientId = std::get<std::string>(responsePayload.getField("client_id"));
+
+		return compareCRCs(session, filePath, aesKeyVec, clientId);
+	}
+	std::cerr << std::string(Constants::___, '-') << "Reconnection failed. Trying to register as a new user" << std::string(Constants::___, '-') << std::endl;
+	return false;
+}
+
+/**
+ * @brief Main function to run the client.
+ *
+ * This function runs the client by either reconnecting to the server or registering as a new user,
+ * depending on the existence of the local ME file.
+ */
 void runClient() {
-	std::cout << std::string(80, '-') << "\nClient started...\n" << std::string(80, '-') << std::endl;
-	std::string addressAndPort = FileHandler::getSpecificLine(Constants::TRANSFER_FILE, Constants::INFO_ADDRESS_AND_PORT_LINE);
-	std::string address = addressAndPort.substr(0, addressAndPort.find(':'));
-	std::string port = addressAndPort.substr(addressAndPort.find(':') + 1);
-	std::string userName = FileHandler::getSpecificLine(Constants::TRANSFER_FILE, Constants::INFO_USERNAME_LINE);
-	std::string filePath = FileHandler::getSpecificLine(Constants::TRANSFER_FILE, Constants::INFO_FILE_PATH_LINE);
 
-	std::cout << "\nClient details:\nName - " << userName << "\nfile path - " << filePath << "\nIp address - " << address << "\nPort - " << port << "\n" << std::endl;
+	// Read the address, port, username, and file path from the transfer file
+	std::cout << std::string(Constants::___, '-') << "\nClient started...\n" << std::string(Constants::___, '-') << std::endl;
+	std::string address_and_port = FileHandler::getSpecificLine(Constants::TRANSFER_FILE, Constants::INFO_ADDRESS_AND_PORT_LINE);
+	std::string address = address_and_port.substr(0, address_and_port.find(':'));
+	std::string port = address_and_port.substr(address_and_port.find(':') + 1);
+	std::string user_name = FileHandler::getSpecificLine(Constants::TRANSFER_FILE, Constants::INFO_USERNAME_LINE);
+	std::string file_path = FileHandler::getSpecificLine(Constants::TRANSFER_FILE, Constants::INFO_FILE_PATH_LINE);
+
+	std::cout << "\nClient details:\nName - " << user_name << "\nFile path - " << file_path << "\nIp address - " << address << "\nPort - " << port << "\n" << std::endl;
 
 	try {
 		ClientSession session(address, port);
 
 		if (FileHandler::isFileExist(Constants::ME_FILE)) {
-
-			// if the file me exists, then try to reconnect to the server. the method returns the response header
-			// send 827 request and receive 1605 response if the reconnection is successful and 1606 response if the reconnection is failed
-			std::cout << std::string(80, '-') << "\nReconnecting to the server...\n" << std::string(80, '-') << std::endl;
-			ResponseHeader responseHeader = session.reconnect();
-
-			std::cout << std::string(80, '-') << "\nReceived response from the server to reconnection request...\n" << std::string(80, '-') << std::endl;
-
-			std::cout << responseHeader.toString() << std::endl;
-
-			// receive the response payload
-			ResponsePayload responsePayload = session.receiveResponsePayload(responseHeader);
-
-			// print the response payload
-			std::cout << responsePayload.toString() << std::endl;
-
-			// if the response code is RECONNECTION_SUCCESS
-			if (responseHeader.getCode() == ResponseHeader::Code::ReconnectionSuccess) {
-
-				// get the aes key from the response payload
-				auto aesKey = responsePayload.getField("aes_key");
-				// convert it to string from auto type
-				std::string aesKeyStr = std::get<std::string>(aesKey);
-				// convert it to vector of char
-				std::vector<char> aesKeyVec(aesKeyStr.begin(), aesKeyStr.end());
-
-				// compare the CRCs of the file
-				unsigned long serverCRC = session.getServerCRC(filePath, aesKeyVec);
-				unsigned long myCRC = session.getMyCRC(filePath);
-				if (myCRC == serverCRC) {
-					std::cout << std::string(80, '-') << "\nCRC comparison successful.\tEnd the program\n" << std::string(80, '-') << std::endl;
-					return;
-				}
-				int counter = 0;
-				while (counter < 4 && myCRC != serverCRC) {
-					counter++;
-					myCRC = session.getMyCRC(filePath);
-					serverCRC = session.getServerCRC(filePath, aesKeyVec);
-				}
-				if (counter == 4) {
-					std::cerr << "CRC comparison failed after 3 attempts.\tEnd the program" << std::endl;
-					return;
-				}
-			}
-			else {
-				std::cerr << "Reconnection failed. Trying to register as a new user" << std::endl;
+			if (!reconnectToServer(session, file_path)) {
+				registerNewUser(session, user_name, file_path);
 			}
 		}
-		else { // if the file me does not exist
-			// register to the server - 825 request and get response 1600 if the registration is successful
-			// 1601 if the registration is failed
-
-			std::cout << std::string(80, '-') << "\nNo " << Constants::ME_FILE << " file found.\nRegistering as a new user...\n" << std::string(80, '-') << std::endl;
-
-			ResponseHeader responseHeader = session.registerUser(userName);
-
-			std::cout << std::string(80, '-') << "\nReceived response from the server to registration request...\n" << std::string(80, '-') << std::endl;
-
-			std::cout << responseHeader.toString() << std::endl;
-			ResponsePayload responsePayload = session.receiveResponsePayload(responseHeader);
-			std::cout << responsePayload.toString() << std::endl;
-
-			if (responseHeader.getCode() == ResponseHeader::Code::RegistrationSuccess) {
-				ResponseHeader responseHeader = session.processClientIDAndSendPublicKey(responsePayload, userName);
-
-				std::cout << std::string(80, '-') << "\nReceived response from the server to public key request...\n" << std::string(80, '-') << std::endl;
-
-				std::cout << responseHeader.toString() << std::endl;
-				ResponsePayload responsePayload = session.receiveResponsePayload(responseHeader);
-				std::cout << responsePayload.toString() << std::endl;
-
-
-				auto aesKey = responsePayload.getField("aes_key");
-				std::string aesKeyStr = std::get<std::string>(aesKey);
-				// convert it to vector of char
-				std::vector<char> aesKeyVec(aesKeyStr.begin(), aesKeyStr.end());
-
-
-				if (responseHeader.getCode() == ResponseHeader::Code::PublicKeyReceived) {
-					unsigned long myCRC = session.getMyCRC(filePath);
-					unsigned long serverCRC = session.getServerCRC(filePath, aesKeyVec);
-					if (myCRC == serverCRC) {
-						std::cout << std::string(80, '-') << "\nCRC comparison successful.\tEnd the program\n" << std::string(80, '-') << std::endl;
-						return;
-					}
-					int counter = 0;
-					while (counter < 4 && myCRC != serverCRC) {
-						counter++;
-						myCRC = session.getMyCRC(filePath);
-						serverCRC = session.getServerCRC(filePath, aesKeyVec);
-					}
-					if (counter == 4) {
-						std::cerr << "CRC comparison failed after 3 attempts." << std::endl;
-						return;
-					}
-				}
-			}
-			else {
-				std::cerr << "Registration failed. End the program" << std::endl;
-				return;
-			}
+		else {
+			registerNewUser(session, user_name, file_path);
 		}
 	}
 	catch (std::exception& e) {
@@ -136,7 +156,11 @@ void runClient() {
 	}
 }
 
-
+/**
+ * @brief Main entry point of the client program.
+ *
+ * Calls the runClient function and returns 0 when the client execution is completed.
+ */
 int main() {
 	runClient();
     return 0;

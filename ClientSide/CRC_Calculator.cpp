@@ -2,7 +2,9 @@
 #include <fstream>
 #include <vector>
 
-
+/**
+ * Precomputed CRC table used in the CRC32 calculation.
+ */
 const uint32_t CRC_Calculator::crctab[8][256] = {
 {
   0x00000000,
@@ -440,6 +442,12 @@ const uint32_t CRC_Calculator::crctab[8][256] = {
 
 #define UNSIGNED(n) (n & 0xffffffff)
 
+/**
+ * @brief Calculates the CRC32 checksum of the given memory buffer.
+ * @param b Pointer to the memory buffer.
+ * @param n The size of the memory buffer in bytes.
+ * @return The calculated CRC32 checksum.
+ */
 unsigned long CRC_Calculator::memcrc(char* b, size_t n) {
     unsigned int v = 0, c = 0;
     unsigned long s = 0;
@@ -459,6 +467,12 @@ unsigned long CRC_Calculator::memcrc(char* b, size_t n) {
 
 }
 
+/**
+ * @brief Reads the content of the specified file and calculates the CRC32 checksum.
+ * This method reads the file in binary mode and processes its content.
+ * @param filePath The path to the file whose CRC is to be calculated.
+ * @return The calculated CRC32 checksum.
+ */
 unsigned long CRC_Calculator::readFile(const std::string& filePath) {
     std::ifstream file(filePath, std::ios::binary);
     if (!file.is_open()) {

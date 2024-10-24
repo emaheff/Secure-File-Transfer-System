@@ -1,0 +1,59 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.41.34120.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/code/mmn15/clientside/requestpayload.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "257ec4631fc1493879c02d2dd81ed98201d24a940af68970d21b24a5f65862bb"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/code/mmn15/clientside/requestpayload.h"
+          },
+          "hashes": {
+            "sha-256": "00b621633a28bc746e39129229e349c8869bdb792417f6de7970b2b3d0419dbe"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/code/mmn15/clientside/requestheader.h"
+          },
+          "hashes": {
+            "sha-256": "dccb24df08b53ec781b3d72e8f6ac4b2d98be772e4cbbda69601be0aaec79c2f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/code/mmn15/clientside/constants.h"
+          },
+          "hashes": {
+            "sha-256": "22f9e2bac87fd1e2716b84f2283c856fc6c686124c285a91ae4c9a5f17a14b8d"
+          }
+        }
+      ]
+    }
+  ]
+}

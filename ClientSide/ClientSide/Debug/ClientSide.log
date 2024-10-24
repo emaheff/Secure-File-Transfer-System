@@ -3,4 +3,13 @@
   - add -D_WIN32_WINNT=0x0601 to the compiler command line; or
   - add _WIN32_WINNT=0x0601 to your project's Preprocessor Definitions.
   Assuming _WIN32_WINNT=0x0601 (i.e. Windows 7 target).
+  ClientSission.cpp
+  Please define _WIN32_WINNT or _WIN32_WINDOWS appropriately. For example:
+  - add -D_WIN32_WINNT=0x0601 to the compiler command line; or
+  - add _WIN32_WINNT=0x0601 to your project's Preprocessor Definitions.
+  Assuming _WIN32_WINNT=0x0601 (i.e. Windows 7 target).
+  FileHandler.cpp
+C:\Users\DELL\code\mmn15\ClientSide\FileHandler.cpp(91,19): warning C4244: 'return': conversion from 'std::streamoff' to 'int', possible loss of data
+  Generating Code...
+C:\Users\DELL\code\mmn15\ClientSide\ClientSission.cpp(211,1): warning C4715: 'ClientSession::processClientIDAndSendPublicKey': not all control paths return a value
   ClientSide.vcxproj -> C:\Users\DELL\code\mmn15\ClientSide\Debug\ClientSide.exe

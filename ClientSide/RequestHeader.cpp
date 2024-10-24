@@ -1,16 +1,25 @@
 #include "RequestHeader.h"
 
-#include <sstream>
-#include <iomanip>
-#include <stdexcept>
 
+
+/**
+ * @brief Constructs a RequestHeader with the specified client ID, version, code, and payload size.
+ * @param clientID The client's unique identifier.
+ * @param version The version of the protocol used.
+ * @param code The operation code indicating the type of request.
+ * @param payloadSize The size of the request payload in bytes.
+ */
 RequestHeader::RequestHeader(std::string clientID, int version, int code, int payloadSize)
 	: clientID(clientID), version(version), code(code), payloadSize(payloadSize)
 {
 }
 
-const int RequestHeader::VERSION = 3;
-
+/**
+ * @brief Converts the request header into a byte vector for transmission.
+ * This method serializes the clientID, version, code, and payload size into a byte array.
+ * @return A vector of chars representing the byte stream of the request header.
+ * @throws std::invalid_argument if the client ID is not exactly 32 characters long.
+ */
 std::vector<char> RequestHeader::toBytes() const {
     std::vector<char> bytes;
 
@@ -42,19 +51,32 @@ std::vector<char> RequestHeader::toBytes() const {
     return bytes;
 }
 
+/**
+ * @brief Returns the total size of the request header.
+ * @return The size of the request header in bytes.
+ */
 int RequestHeader::size() const {
 	return Constants::CLIENT_ID_SIZE + Constants::VERSION_SIZE + Constants::CODE_SIZE + Constants::PAYLOAD_SIZE_SIZE;
 }
 
-std::string RequestHeader::toString() const {
-    std::ostringstream oss;
-    oss << "Client ID: " << clientID << "\n";
-    oss << "Version: " << version << "\n";
-    oss << "Code: " << code << "\n";
-    oss << "Payload Size: " << payloadSize << " bytes\n";
-    return oss.str();
+/**
+ * @brief Overloads the << operator to print the request header's contents.
+ * @param os The output stream.
+ * @param header The request header to be printed.
+ * @return The output stream after printing the request header.
+ */
+std::ostream& operator<<(std::ostream& os, const RequestHeader& header) {
+    os << "Client ID: " << header.clientID << "\n";
+    os << "Version: " << header.version << "\n";
+    os << "Code: " << header.code << "\n";
+    os << "Payload Size: " << header.payloadSize << " bytes\n";
+    return os;
 }
 
+/**
+ * @brief Returns the operation code of the request.
+ * @return The operation code (int) representing the type of request.
+ */
 int RequestHeader::getCode() const {
 	return code;
 }

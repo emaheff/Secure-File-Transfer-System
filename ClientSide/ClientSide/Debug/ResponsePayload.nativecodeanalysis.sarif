@@ -1,0 +1,680 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'CryptoPP::BufferedTransformation::m_buf' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/Users/DELL/crypto++/cryptopp/cryptlib.h"
+                },
+                "region": {
+                  "startLine": 1662,
+                  "startColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "CryptoPP::BufferedTransformation::{ctor}",
+                  "decoratedName": "??0BufferedTransformation@CryptoPP@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "CryptoPP::BufferedTransformation::m_buf"
+          }
+        },
+        {
+          "ruleId": "C26439",
+          "message": {
+            "text": "This kind of function should not throw. Declare it 'noexcept' (f.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/Users/DELL/crypto++/cryptopp/queue.h"
+                },
+                "region": {
+                  "startLine": 265,
+                  "startColumn": 24
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "std::swap",
+                  "decoratedName": "??$swap@VByteQueue@CryptoPP@@$0A@@std@@YAXAAVByteQueue@CryptoPP@@0@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'CryptoPP::AbstractRing<CryptoPP::Integer>::MultiplicativeGroupT::m_pRing' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/Users/DELL/crypto++/cryptopp/algebra.h"
+                },
+                "region": {
+                  "startLine": 238,
+                  "startColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "CryptoPP::AbstractRing<CryptoPP::Integer>::MultiplicativeGroupT::{ctor}",
+                  "decoratedName": "??0MultiplicativeGroupT@?$AbstractRing@VInteger@CryptoPP@@@CryptoPP@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "CryptoPP::AbstractRing<CryptoPP::Integer>::MultiplicativeGroupT::m_pRing"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'CryptoPP::FixedSizeAllocatorWithCleanup<unsigned __int64,16,CryptoPP::NullAllocator<unsigned __int64>,1>::m_array' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/Users/DELL/crypto++/cryptopp/secblock.h"
+                },
+                "region": {
+                  "startLine": 360,
+                  "startColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "CryptoPP::FixedSizeAllocatorWithCleanup<unsigned __int64,16,CryptoPP::NullAllocator<unsigned __int64>,1>::{ctor}",
+                  "decoratedName": "??0?$FixedSizeAllocatorWithCleanup@_K$0BA@V?$NullAllocator@_K@CryptoPP@@$00@CryptoPP@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "CryptoPP::FixedSizeAllocatorWithCleanup<unsigned __int64,16,CryptoPP::NullAllocator<unsigned __int64>,1>::m_array"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'CryptoPP::FixedSizeAllocatorWithCleanup<unsigned __int64,16,CryptoPP::NullAllocator<unsigned __int64>,0>::m_array' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/Users/DELL/crypto++/cryptopp/secblock.h"
+                },
+                "region": {
+                  "startLine": 584,
+                  "startColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "CryptoPP::FixedSizeAllocatorWithCleanup<unsigned __int64,16,CryptoPP::NullAllocator<unsigned __int64>,0>::{ctor}",
+                  "decoratedName": "??0?$FixedSizeAllocatorWithCleanup@_K$0BA@V?$NullAllocator@_K@CryptoPP@@$0A@@CryptoPP@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "CryptoPP::FixedSizeAllocatorWithCleanup<unsigned __int64,16,CryptoPP::NullAllocator<unsigned __int64>,0>::m_array"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'CryptoPP::FixedSizeAllocatorWithCleanup<unsigned int,16,CryptoPP::NullAllocator<unsigned int>,1>::m_array' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/Users/DELL/crypto++/cryptopp/secblock.h"
+                },
+                "region": {
+                  "startLine": 360,
+                  "startColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "CryptoPP::FixedSizeAllocatorWithCleanup<unsigned int,16,CryptoPP::NullAllocator<unsigned int>,1>::{ctor}",
+                  "decoratedName": "??0?$FixedSizeAllocatorWithCleanup@I$0BA@V?$NullAllocator@I@CryptoPP@@$00@CryptoPP@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "CryptoPP::FixedSizeAllocatorWithCleanup<unsigned int,16,CryptoPP::NullAllocator<unsigned int>,1>::m_array"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'CryptoPP::FixedSizeAllocatorWithCleanup<unsigned int,16,CryptoPP::NullAllocator<unsigned int>,0>::m_array' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///C:/Users/DELL/crypto++/cryptopp/secblock.h"
+                },
+                "region": {
+                  "startLine": 584,
+                  "startColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "CryptoPP::FixedSizeAllocatorWithCleanup<unsigned int,16,CryptoPP::NullAllocator<unsigned int>,0>::{ctor}",
+                  "decoratedName": "??0?$FixedSizeAllocatorWithCleanup@I$0BA@V?$NullAllocator@I@CryptoPP@@$0A@@CryptoPP@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "CryptoPP::FixedSizeAllocatorWithCleanup<unsigned int,16,CryptoPP::NullAllocator<unsigned int>,0>::m_array"
+          }
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.41.34120.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///C:/Users/DELL/crypto++/cryptopp/cryptlib.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "12eb02d2bdf953ffd90d0c8ddcaf800dcb3e1890b8f0ea93b533b4087e82785c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///C:/Users/DELL/crypto++/cryptopp/queue.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "7a223d51a78bea39e6a7bdd02ae58cabfdda561e81e461550d240c47f8bd0264"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///C:/Users/DELL/crypto++/cryptopp/algebra.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "0fa07cf7037c0efba9514265c815cac8bfab2047b64b3b6ffca89a84140039f1"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///C:/Users/DELL/crypto++/cryptopp/secblock.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "7d83f568a249e674772fddeea33d4c1bf7b403a880aac82298ebf4729f597d7d"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/code/mmn15/clientside/responsepayload.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "dbc886fba62f196bbeb993e16ae46d7bde063e8027a2c48586bec5fabe11c346"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/code/mmn15/clientside/responsepayload.h"
+          },
+          "hashes": {
+            "sha-256": "b2b3a3f730e67b450bfaf033bb28fa021bd9abc5fe137fb2ccdd99194ab95703"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/code/mmn15/clientside/constants.h"
+          },
+          "hashes": {
+            "sha-256": "22f9e2bac87fd1e2716b84f2283c856fc6c686124c285a91ae4c9a5f17a14b8d"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/code/mmn15/clientside/rsawrapper.h"
+          },
+          "hashes": {
+            "sha-256": "e33afc02a4f1a2b5f850b78d0bdcd8f99ddce79eccf2dcd53cded2914d1773ae"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/osrng.h"
+          },
+          "hashes": {
+            "sha-256": "eba8e5d21f62a4b2f4ff0b5b94c93d7b7ff95d54e15dd082f19a1f2cf4e331cb"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/config.h"
+          },
+          "hashes": {
+            "sha-256": "641a512721c40a6778dfcc143b611c6204f38916bae55d391e2c74c18b70b2f6"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/config_align.h"
+          },
+          "hashes": {
+            "sha-256": "3a3f596ac05567c75b79d736319e561cf5ea01e06573d78bd479fb8673492bb3"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/config_asm.h"
+          },
+          "hashes": {
+            "sha-256": "d9215cd770e26923a18c61b641d56a485500d7c52fa8d45aa4611220eb27e758"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/config_os.h"
+          },
+          "hashes": {
+            "sha-256": "7a876d8032295b3e813dcafd2ea6788c527985c8464273e23d7c4d07c6b5c0c6"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/config_ver.h"
+          },
+          "hashes": {
+            "sha-256": "fc8ecd03f66cea3e8c99db529cb023e13405defcc511ece1877801281d2aabb2"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/config_cpu.h"
+          },
+          "hashes": {
+            "sha-256": "89b1dd39c3c479a590f2ca7fc2e9832f9d50f3b4fac01128a0b89acae88cbd71"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/config_cxx.h"
+          },
+          "hashes": {
+            "sha-256": "0a5042e6ea886e2c38a9626585deb1409a56dbcd35a522e877b648fb9042a366"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/config_dll.h"
+          },
+          "hashes": {
+            "sha-256": "5f5f25287fc9a0bd49230edebaf6377b64f8020aa04d843cdd1a5449dd34c5e4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/config_int.h"
+          },
+          "hashes": {
+            "sha-256": "99a41cf87cb25c898fe438f4ba1e9dbe209e652a0328bacc1adf5d6e4ff848b6"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/config_ns.h"
+          },
+          "hashes": {
+            "sha-256": "c4bc5ebf250efea647afb1873fb89f6b9dc540485f6f569f8b868cd9e8994ef9"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/config_misc.h"
+          },
+          "hashes": {
+            "sha-256": "1918df9919402f747b862bffd1235f4087be76d48d34d4e3b9ee2820ed526823"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/stdcpp.h"
+          },
+          "hashes": {
+            "sha-256": "35f068b2521c8ee31eeb1ea2810a352148a2854f47683363f914be4f090ef750"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/trap.h"
+          },
+          "hashes": {
+            "sha-256": "a82a30348451a7d113ddea392d03b834085802dd05c12c265546d3b90599403f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/randpool.h"
+          },
+          "hashes": {
+            "sha-256": "1d29d8662ebab0da03dc7782e886df16656549ae7c89983c53d89f4779e6785b"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/filters.h"
+          },
+          "hashes": {
+            "sha-256": "783038cf6411bcddcd92c0b900cbfbb4c9038dbfe828ae8fda444313215cf4a9"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/simple.h"
+          },
+          "hashes": {
+            "sha-256": "41a165d3b4ffce87755b28b878e08503d571558cffe5877b7e00cb84226ef373"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/misc.h"
+          },
+          "hashes": {
+            "sha-256": "13de68cfefceff3cc97f980a61b56931cff5bccac9eece0a6d6ab2bc98daa44d"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/secblockfwd.h"
+          },
+          "hashes": {
+            "sha-256": "472e5d0fa333257c3b8254e5fddbcbaa803dae920f65d64542219c0b3b8400cf"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/smartptr.h"
+          },
+          "hashes": {
+            "sha-256": "a2d6f834c9e2890943a203ce7397976d8618e62c3d56f6a6afa456ffdc22e879"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/allocate.h"
+          },
+          "hashes": {
+            "sha-256": "6fbcf40f97fb72c1523bb597d28337623997bc5610f235b9d440b22289b6f970"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/algparam.h"
+          },
+          "hashes": {
+            "sha-256": "a0c1352f81ca19aee1329e00af0e8e298131851a5449ecd042e370a73d8d09d4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/integer.h"
+          },
+          "hashes": {
+            "sha-256": "524baaeae6f5d23b9c07c13c3b34f1c89971d40357385a40b6346886f8b40d84"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/aes.h"
+          },
+          "hashes": {
+            "sha-256": "fbd98402a8ddab54389a433c5685356bf3d3ad2ae37747c242a593667379a683"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/rijndael.h"
+          },
+          "hashes": {
+            "sha-256": "d82187fd5e08a45a74e9aac8a0b9197856ff879d072cdad8b204e6915fbabb4a"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/seckey.h"
+          },
+          "hashes": {
+            "sha-256": "54204f1ae34214150d0087043c19e25e83abe010837ef214a232891598501cfa"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/fips140.h"
+          },
+          "hashes": {
+            "sha-256": "cb4042de79c44789f6730c331dab5cb2ad6d10730e24557084f363c0daf71f34"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/hkdf.h"
+          },
+          "hashes": {
+            "sha-256": "1ccedcd401635ac077d895f147ef142645ad7216205d4adf46899e35e8222b5b"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/hmac.h"
+          },
+          "hashes": {
+            "sha-256": "f8becd33fc708ac1bbcc1929d34fb0f8f7f7b7592f52bc5d8e985d862c0e8cbb"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/rng.h"
+          },
+          "hashes": {
+            "sha-256": "40f2532cf14e950080bb1ba1383c52a2e5af0ab09779de89524f066735b6fa2b"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/sha.h"
+          },
+          "hashes": {
+            "sha-256": "9d9cb08b466b520a21a9549ce438aba5f4c0479e46240a4c4f9160a930962d7c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/iterhash.h"
+          },
+          "hashes": {
+            "sha-256": "397298f1eadcfe7165f8b86670a7879641244e7a48aab62fe910dd3fc6eb3ff5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/rsa.h"
+          },
+          "hashes": {
+            "sha-256": "35c4a3098ffe6d02985c3fc3f84bc1e87608ea59f0bc5f0276044f01dc20a428"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/pubkey.h"
+          },
+          "hashes": {
+            "sha-256": "fb1c3698057c97fa24bc4ec53250d74183bc06df1e602580095238a7de8c22df"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/modarith.h"
+          },
+          "hashes": {
+            "sha-256": "c70de520a347297cb06d5077970009be46ba8767f7021287e603ea99d790a1aa"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/eprecomp.h"
+          },
+          "hashes": {
+            "sha-256": "fe015d5043877c3f55e13dd90be9b39eeac9434a4f6c757e08693c74c5cee9d3"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/argnames.h"
+          },
+          "hashes": {
+            "sha-256": "4fa6995e67001c2b744d64e2f7f36629cf489be21f1ff242fbc13da43df59769"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/pkcspad.h"
+          },
+          "hashes": {
+            "sha-256": "7a5dd58c5e1139d9ed06113a5a162d33033ffc9ad3770602eb45a3f65c7b3cc3"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/hashfwd.h"
+          },
+          "hashes": {
+            "sha-256": "4f9435013967091b562b5b70b0e3ce9aba7266303ec01d4d7ac61fdf08ff3272"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/oaep.h"
+          },
+          "hashes": {
+            "sha-256": "649e1487e1e4ed6a05e4d0e38dc45ae97309d988d9bfbbcde3ffc1d6f4c70d83"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/emsa2.h"
+          },
+          "hashes": {
+            "sha-256": "d6fad095beaa915b7fc655394fcf80eb7cb5ad143b6a54d5d3adbd2d91557f04"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/asn.h"
+          },
+          "hashes": {
+            "sha-256": "edefefbcb0e1a91d4f546348c859de0a746c7b26c24f2fd98451cfc048c830f0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/code/mmn15/clientside/base64wrapper.h"
+          },
+          "hashes": {
+            "sha-256": "07aeb635b546caa4a2b02066e6335c67d1a2e60b4aa405958b3df9081ec531d9"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/base64.h"
+          },
+          "hashes": {
+            "sha-256": "3a3a539c8f3ba7d6d8fdec4a2fb6fa9bb7cc4d4e735d25c527cf21dcfd64bafa"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/crypto++/cryptopp/basecode.h"
+          },
+          "hashes": {
+            "sha-256": "00483175aa5484357b4c154f16b8fbaf795f04ae0a9d01da4d503a585c285db7"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/code/mmn15/clientside/aeswrapper.h"
+          },
+          "hashes": {
+            "sha-256": "a800327a996a9393c276b1c92139233cce6568dddb4c9c051209aa82cf144961"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///c:/users/dell/code/mmn15/clientside/responseheader.h"
+          },
+          "hashes": {
+            "sha-256": "b55afa364457f05c511b49e6ff6de6e27fd0e0486c27a6ed797f983c14f8f95c"
+          }
+        }
+      ]
+    }
+  ]
+}

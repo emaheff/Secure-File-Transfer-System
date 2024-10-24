@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\DELL\crypto++\cryptopp\</FILEPATH>
+      <FILENAME>cryptlib.h</FILENAME>
+      <LINE>1662</LINE>
+      <COLUMN>1</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'CryptoPP::BufferedTransformation::m_buf' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>CryptoPP::BufferedTransformation::{ctor}</FUNCTION>
+    <DECORATED>??0BufferedTransformation@CryptoPP@@QAE@XZ</DECORATED>
+    <FUNCLINE>1662</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>CryptoPP::BufferedTransformation::m_buf</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\DELL\crypto++\cryptopp\</FILEPATH>
+      <FILENAME>queue.h</FILENAME>
+      <LINE>265</LINE>
+      <COLUMN>23</COLUMN>
+    </SFA>
+    <DEFECTCODE>26439</DEFECTCODE>
+    <DESCRIPTION>This kind of function should not throw. Declare it 'noexcept' (f.6).</DESCRIPTION>
+    <FUNCTION>std::swap</FUNCTION>
+    <DECORATED>??$swap@VByteQueue@CryptoPP@@$0A@@std@@YAXAAVByteQueue@CryptoPP@@0@Z</DECORATED>
+    <FUNCLINE>265</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>
