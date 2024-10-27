@@ -63,6 +63,15 @@ UNSIGNED = lambda n: n & 0xffffffff
 
 
 def memcrc(b):
+    """
+    Calculates the CRC checksum of the given byte array, emulating the behavior of the `cksum` command.
+
+    Args:
+        b (bytes): The byte array to calculate the CRC for.
+
+    Returns:
+        int: The computed CRC checksum as an unsigned 32-bit integer.
+    """
     n = len(b)
     i = c = s = 0
     for ch in b:
@@ -74,19 +83,3 @@ def memcrc(b):
         n = n >> 8
         s = UNSIGNED(s << 8) ^ crctab[(s >> 24) ^ c]
     return UNSIGNED(~s)
-
-
-def readfile(fname):
-    try:
-        buffer = open(fname, 'rb').read()
-        return f"{memcrc(buffer)}\t{len(buffer)}\t{fname}"
-    except IOError:
-        print("Unable to open input file", fname)
-        exit(-1)
-    except Exception as err:
-        print("Error processing the file", err)
-        exit(-1)
-
-
-if __name__ == '__main__':
-    print(readfile(sys.argv[-1]))

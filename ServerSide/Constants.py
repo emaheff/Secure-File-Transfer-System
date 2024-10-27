@@ -58,10 +58,11 @@ class Constants:
     PORT_FILE = 'port.info'
     DEFAULT_PORT = '1256'
     HOST = '127.0.0.1'
+    ___ = 80
 
 
 class Crypto:
     AES_KEY_SIZE = 32
 
 
-___ = 80
+
